@@ -47,7 +47,18 @@ def outage_simulator(num_rows: int) -> pd.DataFrame:
 
     # Convert to a DataFrame
     data = [{"date": r[0], "time": r[1], "city": r[2]} for r in unique_data]
-    return pd.DataFrame(data)
+    
+    df = pd.DataFrame(data)
+    
+    # Sort by date and time to ensure the data is ordered from oldest to newest
+    df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'], format='%d-%m-%Y %H:%M')
+    df = df.sort_values(by='datetime')
+
+    df['datetime'] = df['datetime'].dt.strftime('%Y-%m-%d %H:%M:%S')
+
+    df = df.drop(columns=["date","time"])
+    
+    return df
 
 # Generate data and save to CSV with timestamped filename
 def save_data_to_csv(df: pd.DataFrame):
