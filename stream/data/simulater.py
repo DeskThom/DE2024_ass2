@@ -1,4 +1,5 @@
 import random
+import json
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -64,8 +65,23 @@ def save_data_to_csv(df: pd.DataFrame):
     print(f"Data saved to {filename}")
 
 
+# Function to save the generated data as a JSON file
+def save_data_to_json(filename: str, num_records: int):
+    """
+    Saves the simulated data to a JSON file
+    """
+    data = outage_simulator(num_records)
+    
+    data = data.to_dict(orient='records')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"outage_data_{timestamp}.json" 
+    
+    with open(filename, 'w') as f:
+        for record in data:
+            f.write(json.dumps(record, separators=(',', ':')) + '\n')
+
 # Generate 10,000 rows of unique data
 outage_data = outage_simulator(10000)
 
 # Save to CSV with a timestamped filename
-save_data_to_csv(outage_data)
+save_data_to_json(outage_data, 10000)
